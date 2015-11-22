@@ -2,6 +2,8 @@
 FROM dit4c/dit4c-container-base:latest
 MAINTAINER t.dettrick@uq.edu.au
 
+USER root
+
 # Install
 # - MESA DRI drivers for software GLX rendering
 # - X11 dummy & void drivers
@@ -12,7 +14,7 @@ MAINTAINER t.dettrick@uq.edu.au
 # - openbox
 # - xterm
 RUN rpm --rebuilddb && \
-  fsudo yum install -y \
+    yum install -y \
     mesa-dri-drivers \
     xorg-x11-drv-dummy \
     xorg-x11-drv-void \
@@ -24,7 +26,7 @@ RUN rpm --rebuilddb && \
     python-websockify \
     openbox \
     xterm && \
-  rm -f /usr/share/applications/x11vnc.desktop
+    rm -f /usr/share/applications/x11vnc.desktop
 
 # Get the last good build of noVNC
 RUN git clone https://github.com/kanaka/noVNC.git /opt/noVNC && \
@@ -33,9 +35,9 @@ RUN git clone https://github.com/kanaka/noVNC.git /opt/noVNC && \
 
 # Install latest tint2 & lxrandr from RPM and icons from Yum
 RUN rpm --rebuilddb && \
-  fsudo yum localinstall -y https://kojipkgs.fedoraproject.org/packages/tint2/0.12/4.fc21/x86_64/tint2-0.12-4.fc21.x86_64.rpm && \
-  fsudo yum localinstall -y https://dl.fedoraproject.org/pub/fedora/linux/development/rawhide/x86_64/os/Packages/l/lxrandr-0.3.0-1.fc23.x86_64.rpm && \
-  fsudo yum install -y gnome-icon-theme
+    yum localinstall -y https://kojipkgs.fedoraproject.org/packages/tint2/0.12/4.fc21/x86_64/tint2-0.12-4.fc21.x86_64.rpm && \
+    yum localinstall -y https://dl.fedoraproject.org/pub/fedora/linux/development/rawhide/x86_64/os/Packages/l/lxrandr-0.3.0-1.fc23.x86_64.rpm && \
+    yum install -y gnome-icon-theme
 
 # Add supporting files (directory at a time to improve build speed)
 COPY etc /etc
@@ -48,3 +50,4 @@ USER researcher
 
 # Check nginx config is OK
 RUN nginx -t
+
